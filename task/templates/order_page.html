@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Order Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.9/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        /* General body styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header Section */
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-container label {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .header-container select,
+        .header-container input {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            background-color: #f1f3f5;
+        }
+
+        .header-container input:disabled,
+        .header-container select:disabled {
+            background-color: #e9ecef;
+        }
+
+        /* Main Content Styling */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-links a {
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        table th {
+            font-weight: bold;
+        }
+
+        table td input[type="number"],
+        table td input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .item-total {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-container {
+            text-align: center;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .form-group input[type="date"] {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            background-color: #f1f3f5;
+            width: 100%;
+        }
+        
+        .form-group .form-text {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-container input,
+            .header-container select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% comment %} <div>
+        {% if messages %}
+            <div class="message-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div> {% endcomment %}
+    <!-- Header Section -->
+    <div class="header">
+        <div class="header-container">
+            <div>
+                <label for="user-select">User:</label>
+                <select id="user-select" disabled>
+                    <option>{{ request.user.username }}</option>
+                </select>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="#">Product Page</a>
+            <a href="{% url 'order_page' %}">Order Page</a>
+        </div>
+
+        <form action="{% url 'place_order' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="order_date">Order Date</label>
+                <input type="date" name="order_date" id="order_date" required class="form-control">
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total Price</th>
+                        <th>Instruction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="item_ids" value="{{ item.id }}" data-stock="{{ item.stock }}">
+                        </td>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            <input type="number" name="quantity_{{ item.id }}" min="1" max="{{ item.stock }}" value="1" class="quantity" data-price="{{ item.price }}" data-stock="{{ item.stock }}">
+                        </td>
+                        <td>{{ item.price }}</td>
+                        <td class="item-total">{{ item.price }}</td>
+                        <td>
+                            <input type="text" name="instruction_{{ item.id }}" placeholder="Add instruction">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="btn-container">
+                <button class="btn" type="submit">Order Now</button>
+                <a href="{% url 'order_list' %}" class="btn">Order List</a>
+                <a href="{% url 'login' %}" class="logout-btn">Logout</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.9/dist/sweetalert2.min.js"></script>
+    <script>
+        // Display SweetAlert if messages exist
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    icon: "{{ message.tags }}",
+                    title: "{{ message|escapejs }}",
+                    showConfirmButton: true
+                });
+            {% endfor %}
+        {% endif %}
+
+        // Update total price logic
+        document.querySelectorAll('.quantity').forEach(function(input) {
+            input.addEventListener('input', function() {
+                const unitPrice = parseFloat(input.dataset.price);
+                const maxStock = parseInt(input.dataset.stock);
+                const quantity = parseInt(input.value) || 0;
+
+                if (quantity > maxStock) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: `Cannot order more than available stock (${maxStock}).`,
+                    });
+                    input.value = maxStock;
+                }
+
+                const row = input.closest('tr');
+                const totalCell = row.querySelector('.item-total');
+                totalCell.textContent = (quantity * unitPrice).toFixed(2);
+            });
+        });
+    </script>
+</body>
+</html>
